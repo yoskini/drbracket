@@ -105,6 +105,13 @@ var config = Config{
 	Version: false,
 }
 
+var Version = "use `make build' to fill correctly {VERSION}"
+var Revision = "{REVISION}"
+
+func fullVersion() string {
+	return Version + "-" + Revision
+}
+
 func main() {
 	var parser = flags.NewParser(&config, flags.Default)
 	_, err := parser.Parse()
@@ -113,7 +120,7 @@ func main() {
 	}
 
 	if config.Version {
-		fmt.Printf("Version: 0.0.1")
+		fmt.Printf("Version: %s\n", fullVersion())
 	}
 
 	fchan := make(chan string, 100)

@@ -22,6 +22,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"strings"
 
 	"sync"
 
@@ -29,6 +30,44 @@ import (
 	"github.com/sirupsen/logrus"
 	"github.com/yoskini/drbracket/lib/parser"
 )
+
+func HasCodeExtension(ext string) bool {
+	extensions := map[string]bool{
+		"ada":   true,
+		"adb":   true,
+		"2.ada": true,
+		"bas":   true,
+		"c":     true,
+		"clj":   true,
+		"cls":   true,
+		"cpp":   true,
+		"cc":    true,
+		"cxx":   true,
+		"cbp":   true,
+		"cs":    true,
+		"d":     true,
+		"for":   true,
+		"ftn":   true,
+		"f90":   true,
+		"go":    true,
+		"hpp":   true,
+		"hxx":   true,
+		"hs":    true,
+		"java":  true,
+		"lisp":  true,
+		"m":     true,
+		"php":   true,
+		"py":    true,
+		"r":     true,
+		"rb":    true,
+		"scala": true,
+		"sci":   true,
+	}
+	if res, ok := extensions[strings.ToLower(ext)]; ok {
+		return res
+	}
+	return false
+}
 
 func walker(p string, files chan<- string) error {
 	stat, err := os.Stat(p)
@@ -46,7 +85,9 @@ func walker(p string, files chan<- string) error {
 				return fmt.Errorf("Cannot stat file %s", path)
 			}
 			if stat.Mode().IsRegular() {
-				files <- path
+				if HasCodeExtension(path) {
+					files <- path
+				}
 			}
 			return nil
 		})
@@ -54,7 +95,9 @@ func walker(p string, files chan<- string) error {
 			return fmt.Errorf("Cannot walk filepath %s", p)
 		}
 	case mode.IsRegular():
-		files <- p
+		if HasCodeExtension(p) {
+			files <- p
+		}
 	}
 	return nil
 }

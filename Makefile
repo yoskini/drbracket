@@ -25,4 +25,4 @@ build:
 	go build -o drbracket -ldflags "-X main.Version=`git describe --abbrev=0 --tags` -X main.Revision=`git describe --abbrev=8 --dirty --always --long --all`"
 
 install:
-	go install -ldflags "-X main.Version=`git describe --abbrev=0 --tags` -X main.Revision=`git describe --abbrev=8 --dirty --always --long --all`"
+	GOBIN=/usr/local/bin go install -ldflags "-X main.Version=`git describe --abbrev=0 --tags` -X main.Revision=`git describe --abbrev=8 --dirty --always --long --all`"

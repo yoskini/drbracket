@@ -119,6 +119,28 @@ func tester(c <-chan string) error {
 			lineNum++
 			//TODO skip comments
 			line := scanner.Text()
+			tstring := strings.TrimSpace(line)
+			switch {
+			case strings.HasPrefix(tstring, "//"):
+				fallthrough
+			case strings.HasPrefix(tstring, "--"):
+				fallthrough
+			case strings.HasPrefix(tstring, "#"):
+				fallthrough
+			case strings.HasPrefix(tstring, "/*"):
+				fallthrough
+			case strings.HasPrefix(tstring, "<!--"):
+				fallthrough
+			case strings.HasPrefix(tstring, "!*"):
+				fallthrough
+			case strings.HasPrefix(tstring, "{-"):
+				fallthrough
+			case strings.HasPrefix(tstring, "%"):
+				fallthrough
+			case strings.HasPrefix(tstring, "\"\"\""):
+				continue
+			default:
+			}
 			err := parser.ParseLine(lineNum, line)
 			if err != nil {
 				fmt.Printf(err.Error())

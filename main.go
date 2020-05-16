@@ -72,17 +72,17 @@ func HasCodeExtension(ext string) bool {
 func walker(p string, files chan<- string) error {
 	stat, err := os.Stat(p)
 	if err != nil {
-		return fmt.Errorf("Cannot stat file %s", p)
+		return fmt.Errorf("Cannot stat file %s: %s", p, err)
 	}
 	switch mode := stat.Mode(); {
 	case mode.IsDir():
 		err := filepath.Walk(p, func(path string, info os.FileInfo, err error) error {
 			if err != nil {
-				return fmt.Errorf("Cannot explore path %s", path)
+				return fmt.Errorf("Cannot explore path %s: %s", path, err)
 			}
 			stat, err := os.Stat(path)
 			if err != nil {
-				return fmt.Errorf("Cannot stat file %s", path)
+				return fmt.Errorf("Cannot stat file %s: %s", path, err)
 			}
 			if stat.Mode().IsRegular() {
 				if HasCodeExtension(path) {
@@ -92,7 +92,7 @@ func walker(p string, files chan<- string) error {
 			return nil
 		})
 		if err != nil {
-			return fmt.Errorf("Cannot walk filepath %s", p)
+			return fmt.Errorf("Cannot walk filepath %s: %s", p, err)
 		}
 	case mode.IsRegular():
 		if HasCodeExtension(p) {

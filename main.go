@@ -184,6 +184,11 @@ func main() {
 	var parser = flags.NewParser(&config, flags.Default)
 	_, err := parser.Parse()
 	if err != nil {
+		if e, ok := err.(*flags.Error); ok {
+			if e.Type == flags.ErrHelp {
+				return
+			}
+		}
 		logrus.Fatalf(err.Error())
 	}
 

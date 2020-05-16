@@ -154,7 +154,7 @@ func tester(c <-chan string) error {
 		if !parser.Empty() {
 			b := parser.Top()
 			fh.Close()
-			return fmt.Errorf("File %s: Unclosed %v bracket at line: %v, col: %v", f, b.Kind, b.Line, b.Col)
+			return fmt.Errorf("File %s: Unclosed %s bracket at line: %v, col: %v", f, string(b.Kind), b.Line, b.Col)
 		}
 		fh.Close()
 	}

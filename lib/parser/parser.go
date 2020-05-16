@@ -57,6 +57,31 @@ func (p *BracketParser) Top() *Bracket {
 	return nil
 }
 
+func expected(b BracketKind) BracketKind {
+	switch b {
+	case OpenRound:
+		return ClosedRound
+	case OpenSquare:
+		return ClosedSquare
+	case ClosedBrace:
+		return ClosedBrace
+	}
+	panic("Unknown bracket kind")
+}
+
+func isOpenBracket(b BracketKind) bool {
+	switch b {
+	case OpenRound:
+		fallthrough
+	case OpenSquare:
+		fallthrough
+	case OpenBrace:
+		return true
+	default:
+		return false
+	}
+}
+
 func (p *BracketParser) ParseLine(lineNum int, line string) error {
 	for col, c := range line {
 		switch c {
@@ -68,18 +93,36 @@ func (p *BracketParser) ParseLine(lineNum int, line string) error {
 			p.stack = append(p.stack, Bracket{Kind: OpenBrace, Line: lineNum, Col: col + 1})
 		case ')':
 			if len(p.stack) == 0 || p.stack[len(p.stack)-1].Kind != OpenRound {
+				for i := 1; i <= len(p.stack); i++ {
+					if orphan := p.stack[len(p.stack)-i]; isOpenBracket(orphan.Kind) {
+						return fmt.Errorf("Unbalanced bracket. Found ')' at line %d, col %d. Expected %v from line %d, col %d",
+							lineNum, col, string(expected(orphan.Kind)), orphan.Line, orphan.Col)
+					}
+				}
 				return fmt.Errorf("Unbalanced bracket. Found ')' at line %d, col %d", lineNum, col)
 			}
 			n := len(p.stack) - 1
 			p.stack = p.stack[:n]
 		case ']':
 			if len(p.stack) == 0 || p.stack[len(p.stack)-1].Kind != OpenSquare {
+				for i := 1; i <= len(p.stack); i++ {
+					if orphan := p.stack[len(p.stack)-i]; isOpenBracket(orphan.Kind) {
+						return fmt.Errorf("Unbalanced bracket. Found ']' at line %d, col %d. Expected %v from line %d, col %d",
+							lineNum, col, string(expected(orphan.Kind)), orphan.Line, orphan.Col)
+					}
+				}
 				return fmt.Errorf("Unbalanced bracket. Found ']' at line %d, col %d", lineNum, col)
 			}
 			n := len(p.stack) - 1
 			p.stack = p.stack[:n]
 		case '}':
 			if len(p.stack) == 0 || p.stack[len(p.stack)-1].Kind != OpenBrace {
+				for i := 1; i <= len(p.stack); i++ {
+					if orphan := p.stack[len(p.stack)-i]; isOpenBracket(orphan.Kind) {
+						return fmt.Errorf("Unbalanced bracket. Found '}' at line %d, col %d. Expected %v from line %d, col %d",
+							lineNum, col, string(expected(orphan.Kind)), orphan.Line, orphan.Col)
+					}
+				}
 				return fmt.Errorf("Unbalanced bracket. Found '}' at line %d, col %d", lineNum, col)
 			}
 			n := len(p.stack) - 1

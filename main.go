@@ -108,11 +108,11 @@ func tester(c <-chan string) error {
 		if err != nil {
 			return fmt.Errorf("Cannot open file %s", f)
 		}
-		defer fh.Close()
 		scanner := bufio.NewScanner(fh)
 		lineNum := 0
 		parser := parser.NewBracketParser()
 		if parser == nil {
+			fh.Close()
 			return fmt.Errorf("Cannot instantiate BracketParser")
 		}
 		for scanner.Scan() {
@@ -143,18 +143,21 @@ func tester(c <-chan string) error {
 			}
 			err := parser.ParseLine(lineNum, line)
 			if err != nil {
-				fmt.Printf(err.Error())
-				return err
+				fh.Close()
+				return fmt.Errorf("File %s: %s", f, err)
 			}
 		}
 
 		if err := scanner.Err(); err != nil {
+			fh.Close()
 			return err
 		}
 		if !parser.Empty() {
 			b := parser.Top()
-			fmt.Printf("Unclosed %v bracket at line: %v, col: %v\n", b.Kind, b.Line, b.Col)
+			fh.Close()
+			return fmt.Errorf("File %s: Unclosed %v bracket at line: %v, col: %v\n", f, b.Kind, b.Line, b.Col)
 		}
+		fh.Close()
 	}
 	return nil
 }
@@ -206,7 +209,10 @@ func main() {
 
 	wgAll.Add(1)
 	go func() {
-		tester(fchan)
+		err := tester(fchan)
+		if err != nil {
+			logrus.Error(err)
+		}
 		wgAll.Done()
 	}()
 

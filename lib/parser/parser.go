@@ -25,11 +25,11 @@ type BracketKind rune
 
 const (
 	OpenRound    BracketKind = '('
-	OpenSquare               = '['
-	OpenBrace                = '{'
-	ClosedRound              = ')'
-	ClosedSquare             = ']'
-	ClosedBrace              = '}'
+	OpenSquare   BracketKind = '['
+	OpenBrace    BracketKind = '{'
+	ClosedRound  BracketKind = ')'
+	ClosedSquare BracketKind = ']'
+	ClosedBrace  BracketKind = '}'
 )
 
 type Bracket struct {

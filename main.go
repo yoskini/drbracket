@@ -117,7 +117,6 @@ func tester(c <-chan string) error {
 		}
 		for scanner.Scan() {
 			lineNum++
-			//TODO skip comments
 			line := scanner.Text()
 			tstring := strings.TrimSpace(line)
 			switch {
@@ -155,7 +154,7 @@ func tester(c <-chan string) error {
 		if !parser.Empty() {
 			b := parser.Top()
 			fh.Close()
-			return fmt.Errorf("File %s: Unclosed %v bracket at line: %v, col: %v\n", f, b.Kind, b.Line, b.Col)
+			return fmt.Errorf("File %s: Unclosed %v bracket at line: %v, col: %v", f, b.Kind, b.Line, b.Col)
 		}
 		fh.Close()
 	}

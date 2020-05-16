@@ -31,7 +31,7 @@ import (
 	"github.com/yoskini/drbracket/lib/parser"
 )
 
-func HasCodeExtension(ext string) bool {
+func HasCodeExtension(filename string) bool {
 	extensions := map[string]bool{
 		"ada":   true,
 		"adb":   true,
@@ -63,6 +63,8 @@ func HasCodeExtension(ext string) bool {
 		"scala": true,
 		"sci":   true,
 	}
+	tokens := strings.Split(filename, ".")
+	ext := tokens[len(tokens)-1]
 	if res, ok := extensions[strings.ToLower(ext)]; ok {
 		return res
 	}

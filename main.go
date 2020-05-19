@@ -62,6 +62,8 @@ func HasCodeExtension(filename string) bool {
 		"rb":    true,
 		"scala": true,
 		"sci":   true,
+		"sh":    true,
+		"conf":  true,
 	}
 	tokens := strings.Split(filename, ".")
 	ext := tokens[len(tokens)-1]

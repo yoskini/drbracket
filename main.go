@@ -112,6 +112,7 @@ func tester(c <-chan string) error {
 		if err != nil {
 			return fmt.Errorf("Cannot open file %s", f)
 		}
+		defer fh.Close()
 		scanner := bufio.NewScanner(fh)
 		lineNum := 0
 		parser := parser.NewBracketParser()
@@ -157,10 +158,8 @@ func tester(c <-chan string) error {
 		}
 		if !parser.Empty() {
 			b := parser.Top()
-			fh.Close()
 			return fmt.Errorf("File %s: Unclosed %s bracket at line: %v, col: %v", f, string(b.Kind), b.Line, b.Col)
 		}
-		fh.Close()
 	}
 	return nil
 }

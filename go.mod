@@ -17,9 +17,11 @@
 
 module github.com/yoskini/drbracket
 
-go 1.14
+go 1.20
 
 require (
-	github.com/jessevdk/go-flags v1.4.0
-	github.com/sirupsen/logrus v1.6.0
+	github.com/jessevdk/go-flags v1.5.0
+	github.com/sirupsen/logrus v1.9.0
 )
+
+require golang.org/x/sys v0.5.0 // indirect
